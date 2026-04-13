@@ -63,7 +63,7 @@ const Profile = ({ setIsLoggedIn }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <span className="text-2xl">🌐</span>
-                <h3 className="font-black text-green-950 italic text-lg">{t('lang_label')}</h3>
+                <h3 className="font-black text-green-950 italic text-lg">{t('language')}</h3>
               </div>
               
               <select 
