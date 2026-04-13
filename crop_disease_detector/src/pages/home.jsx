@@ -1,54 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import PageTransition from '../components/PageTransition';
+
+// Ab naam exactly match karega jo tumhare folder mein hai
+import heroImage from '../assets/images/home.jfif'; 
 
 const Home = () => {
+  const { t } = useTranslation();
+
   return (
-    <div className="bg-background min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
-      {/* Hero Section */}
-      <div className="max-w-3xl">
-        <h1 className="text-5xl md:text-6xl font-extrabold text-primary leading-tight">
-          Detect Crop Diseases <br /> 
-          <span className="text-secondary">In Seconds with AI</span>
-        </h1>
+    <PageTransition>
+    <div className="bg-background min-h-[90vh]">
+      <div className="container mx-auto px-6 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         
-        <p className="mt-6 text-lg text-gray-600 max-w-xl mx-auto">
-          Apni fasal ki photo upload karein aur turant bimari ka pata lagayein. 
-          Desh ke kisanon ke liye ek smart aur aasaan hal.
-        </p>
+        {/* Left Content */}
+        <div className="text-left animate-fadeIn">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-primary leading-tight tracking-tight">
+            {t('welcome')}
+          </h1>
+          <p className="mt-8 text-xl text-gray-700 max-w-xl">
+            {t('tagline')}
+          </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Link 
-            to="/scan" 
-            className="bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition"
-          >
-            Start Scanning Now
-          </Link>
+          <div className="mt-12 flex flex-col sm:flex-row gap-5">
+            <Link to="/scan" className="bg-primary text-white px-10 py-4 rounded-full font-bold text-lg shadow-lg hover:scale-105 transition transform text-center">
+              {t('scan_btn')}
+            </Link>
+            <Link to="/dashboard" className="bg-white text-primary border-2 border-primary px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition text-center">
+              {t('dashboard')}
+            </Link>
+          </div>
+        </div>
+
+        {/* Right Content */}
+        <div className="relative group">
+          <div className="absolute -inset-4 bg-primary/10 rounded-3xl transform group-hover:rotate-2 transition-transform duration-500"></div>
           
-          <Link 
-            to="/about" 
-            className="bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition"
-          >
-            Learn More
-          </Link>
-        </div>
-      </div>
-
-      {/* Stats or Features Preview */}
-      <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl">
-        <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="font-bold text-xl text-primary">98% Accuracy</h3>
-          <p className="text-gray-500 text-sm mt-2">Advanced AI models trained on millions of crop images.</p>
-        </div>
-        <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="font-bold text-xl text-primary">Instant Results</h3>
-          <p className="text-gray-500 text-sm mt-2">Get diagnosis and treatment advice within seconds.</p>
-        </div>
-        <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="font-bold text-xl text-primary">Free for All</h3>
-          <p className="text-gray-500 text-sm mt-2">Empowering farmers with technology at zero cost.</p>
+          <img 
+            src={heroImage} 
+            alt="Crop AI Home" 
+            className="relative rounded-3xl shadow-2xl object-cover w-full h-[400px] md:h-[500px] border-4 border-white"
+          />
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 };
 

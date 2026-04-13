@@ -1,6 +1,7 @@
 {
-  "welcome": "Welcome to CropAI",
-  "scan_now": "Scan Crop",
-  "home": "Home",
-  "dashboard": "Dashboard"
+  "welcome": "Welcome, {{name}}!",
+  "scan_btn": "Scan Now",
+  "logout": "Logout",
+  "history": "History",
+  "language_label": "App Language"
 }

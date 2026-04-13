@@ -1,4 +1,5 @@
 // src/main.jsx
+import './i18n/config'; // Bas ye ek line add karni hai
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
