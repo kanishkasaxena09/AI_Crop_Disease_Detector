@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-// 👇 Tumne sahi pathimport kiya hai!
 import splashImg from '../assets/images/splash.jfif'; 
 import PageTransition from '../components/PageTransition';
 
@@ -15,14 +14,14 @@ const Splash = ({ setIsLoggedIn }) => {
         <img 
           src={splashImg} 
           alt="CropAI Splash" 
-          // `w-full h-full` aur `object-cover` se photo fit ho jayegi bina dabe
+          
           className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-500" 
         />
-        {/* Halka glow effect niche taaki white background par uth kar dikhe */}
+        { }
         <div className="absolute inset-0 rounded-full shadow-[inset_0_0_20px_rgba(255,255,255,0.8)]"></div>
       </div>
 
-      {/* Text Section (Jaise pehle tha) */}
+      {/* Text Section  */}
       <div className="text-center mb-12">
         <h1 className="text-5xl font-black text-primary italic tracking-tighter mb-4">
           CROP<span className="text-secondary">AI</span>
@@ -32,10 +31,10 @@ const Splash = ({ setIsLoggedIn }) => {
         </p>
       </div>
       
-      {/* Buttons Section (Jaise pehle tha) */}
+      {/* Buttons Section  */}
       <div className="flex flex-col space-y-4 w-full max-w-xs relative z-10">
         
-        {/* FIX (Already done in your code): Ab ye sirf page badlega, login nahi karega */}
+        { }
         <button 
           onClick={() => navigate('/login')} 
           className="bg-primary text-white py-4 rounded-[30px] font-black text-lg shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300"
@@ -52,7 +51,7 @@ const Splash = ({ setIsLoggedIn }) => {
         
       </div>
 
-      {/* Background Decorative Gradient for Depth */}
+      {/* Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-radial from-primary/5 to-white/5 -z-10 rounded-full blur-[100px]"></div>
     </div>
     </PageTransition>

@@ -12,16 +12,16 @@ const Profile = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. Browser ki memory (localStorage) se data uthao
+    // pick from browser memory
     const name = localStorage.getItem('userName');
     const city = localStorage.getItem('userCity');
     const state = localStorage.getItem('userState');
-    const savedPhoto = localStorage.getItem('userPhoto'); // 👈 Ye ab DB se aayega login par
+    const savedPhoto = localStorage.getItem('userPhoto');
     
     if (name) setUserName(name);
     if (city && state) setUserLocation(`${city}, ${state}`);
     
-    // Agar photo localStorage mein hai (Base64 string), toh dikhao
+    
     if (savedPhoto && savedPhoto !== "null") {
       setUserPhoto(savedPhoto);
     }
@@ -36,11 +36,11 @@ const Profile = ({ setIsLoggedIn }) => {
       reader.onloadend = async () => {
         const base64 = reader.result;
         
-        // A. Pehle UI par dikhao aur LocalStorage mein rakho
+       
         setUserPhoto(base64);
         localStorage.setItem('userPhoto', base64);
 
-        // B. ✅ Phir Database mein permanent save karo
+        // save in db
         try {
           const email = localStorage.getItem('userEmail');
           await axios.put("http://127.0.0.1:8000/update-photo", {
@@ -61,7 +61,7 @@ const Profile = ({ setIsLoggedIn }) => {
   };
 
   const handleLogout = () => {
-    localStorage.clear(); // 👈 Sab saaf!
+    localStorage.clear(); 
     setIsLoggedIn(false);
     navigate('/login');
   };

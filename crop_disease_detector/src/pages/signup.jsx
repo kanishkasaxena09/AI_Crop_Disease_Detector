@@ -20,7 +20,7 @@ const CustomModal = ({ isOpen, message, onClose }) => (
 );
 
 const Signup = ({ setIsLoggedIn }) => {
-  // City aur State state mein add kiya 👈
+  
   const [formData, setFormData] = useState({ name: '', email: '', password: '', city: '', state: '', otp: '' });
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ const Signup = ({ setIsLoggedIn }) => {
       const response = await axios.post("http://127.0.0.1:8000/signup", formData);
 
       if (response.status === 200) {
-        // LocalStorage mein sab save kiya 👈
+       
         localStorage.setItem("userName", formData.name);
         localStorage.setItem("userCity", formData.city);
         localStorage.setItem("userState", formData.state);
@@ -76,7 +76,7 @@ const Signup = ({ setIsLoggedIn }) => {
             <button type="button" onClick={sendOtp} className="bg-green-100 text-green-700 px-5 rounded-2xl font-black text-xs hover:bg-green-700 hover:text-white transition-all shadow-sm">OTP</button>
           </div>
 
-          {/* City & State Inputs 👈 */}
+          {/* City & State Inputs */}
           <div className="flex gap-2">
             <input type="text" placeholder="Shehar (City)" className="w-1/2 p-4 bg-gray-50 border rounded-2xl font-bold outline-none focus:border-green-500 text-center" onChange={(e)=>setFormData({...formData, city: e.target.value})} required />
             <input type="text" placeholder="Rajya (State)" className="w-1/2 p-4 bg-gray-50 border rounded-2xl font-bold outline-none focus:border-green-500 text-center" onChange={(e)=>setFormData({...formData, state: e.target.value})} required />

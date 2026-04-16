@@ -4,7 +4,7 @@ import PageTransition from '../components/PageTransition';
 
 const WeatherCard = () => {
   const [weather, setWeather] = useState(null);
-  const [forecast, setForecast] = useState([]); // 📅 Live Forecast State
+  const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,15 +18,15 @@ const WeatherCard = () => {
       try {
         setLoading(true);
         
-        // 📡 5-Day / 3-Hour Forecast API se sara data ek saath uthayenge
+        
         const res = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?q=${userCity}&units=metric&appid=${API_KEY}&lang=hi`
         );
 
-        // 1. Current Data (Pehla record)
+       
         const currentData = res.data.list[0];
 
-        // 2. 📅 Live Forecast Filtering (Har 24 ghante ka ek record)
+       //forecast
         const dailyData = res.data.list.filter((reading, index) => index % 8 === 0).map(item => ({
           day: new Date(item.dt_txt).toLocaleDateString('en-US', { weekday: 'short' }),
           temp: Math.round(item.main.temp) + "°",
@@ -109,7 +109,7 @@ const WeatherCard = () => {
               </div>
             </div>
 
-            {/* 📅 LIVE WEEKLY FORECAST (Updated to be Dynamic) */}
+            {/* week update */}
             <div className="bg-black/5 backdrop-blur-md rounded-[40px] p-8 border border-green-900/10 shadow-inner">
               <div className="flex justify-between items-center gap-2">
                 {forecast.map((item, index) => (

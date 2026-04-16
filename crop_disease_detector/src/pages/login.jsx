@@ -34,11 +34,11 @@ const Login = ({ setIsLoggedIn }) => {
       const response = await axios.post("http://127.0.0.1:8000/login", { email, password });
 
       if (response.status === 200) {
-        // ✅ Sab kuch browser ki memory mein save karo
+        // save in browser memory
         localStorage.setItem("userName", response.data.user.name);
         localStorage.setItem("userEmail", response.data.user.email);
-        localStorage.setItem("userCity", response.data.user.city);   // 👈 Ye line jodi hai
-        localStorage.setItem("userState", response.data.user.state); // 👈 Ye line jodi hai
+        localStorage.setItem("userCity", response.data.user.city);  
+        localStorage.setItem("userState", response.data.user.state);
         localStorage.setItem("isLoggedIn", "true");
 
         setIsLoggedIn(true);
