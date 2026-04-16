@@ -21,11 +21,8 @@ class DepthwiseConv2DFix(KDepthwiseConv2D):
 # 1. Database Setup
 models.Base.metadata.create_all(bind=database.engine)
 
-# ---------------------------------------------------------
-# 🤖 ML MODEL & JSON LOADING (Lala Check Here)
-# ---------------------------------------------------------
+# 🤖 ML MODEL LOADING
 try:
-    # Model load karo (vahi naam jo predicate.py mein hai)
     model = tf.keras.models.load_model(
         "crop_disease_model.h5",
         compile=False,
@@ -33,15 +30,12 @@ try:
     )
     with open("class_indices.json", "r") as f:
         class_indices = json.load(f)
-    
-    # Numbers ko names mein badlo {0: "Healthy", 1: "Blight"}
     class_names = {int(v): k for k, v in class_indices.items()}
     print("AI Model and Classes are loaded successfully!")
 except Exception as e:
     print(f"AI Model not loaded: {e}")
     model = None
     class_names = {}
-# ---------------------------------------------------------
 
 app = FastAPI()
 
@@ -97,16 +91,16 @@ class ProfileUpdate(BaseModel):
 def home():
     return {"message": "CropAI Backend is Live!"}
 
-# --- 📸 ML PREDICTION ROUTE ---
+# --- 📸 ML PREDICTION ROUTE (Database Saving Included) ---
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+async def predict(file: UploadFile = File(...), db: Session = Depends(database.get_db)):
     if model is None or not class_names:
-        raise HTTPException(status_code=500, detail="AI Model ya Class Mapping nahi mili!")
+        raise HTTPException(status_code=500, detail="AI Model missing!")
 
     try:
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert('RGB')
-        image = image.resize((224, 224)) # Predicate.py ke hisab se 224x224
+        image = image.resize((224, 224))
         
         img_array = np.array(image) / 255.0
         img_array = np.expand_dims(img_array, axis=0)
@@ -114,33 +108,48 @@ async def predict(file: UploadFile = File(...)):
         predictions = model.predict(img_array, verbose=0)[0]
         pred_index = np.argmax(predictions)
         confidence = float(np.max(predictions))
+        disease_name = class_names[pred_index]
 
-        # Result Logic (Predicate.py wala)
-        if confidence < 0.35:
-            return {
-                "disease": "Pata nahi chal raha",
-                "confidence": f"{confidence*100:.2f}%",
-                "message": "⚠️ Low confidence! Please saaf photo upload karein."
-            }
-        else:
-            return {
-                "disease": class_names[pred_index],
-                "confidence": f"{confidence*100:.2f}%",
-                "message": f"✅ Humne {class_names[pred_index]} pehchana hai."
-            }
+        # ✅ DATABASE MEIN SAVE KARO
+        new_scan = models.ScanHistory(
+            disease=disease_name,
+            confidence=f"{confidence*100:.2f}%"
+        )
+        db.add(new_scan)
+        db.commit()
+        db.refresh(new_scan)
+
+        return {
+            "disease": disease_name,
+            "confidence": f"{confidence*100:.2f}%",
+            "message": f"✅ Humne {disease_name} pehchana hai."
+        }
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Prediction fail ho gayi!")
 
-# --- BAKI ROUTES (OTP, SIGNUP, LOGIN, CONTACT, PROFILE) ---
-# (Yahan wahi purane routes rahenge jo upar diye gaye thae)
+# --- 📊 DASHBOARD DATA FETCH ROUTE ---
+@app.get("/get-scans")
+def get_scans(db: Session = Depends(database.get_db)):
+    scans = db.query(models.ScanHistory).order_by(models.ScanHistory.id.desc()).all()
+    total_scans = len(scans)
+    healthy_count = sum(1 for s in scans if "healthy" in s.disease.lower())
+    
+    return {
+        "total": total_scans,
+        "healthy": healthy_count,
+        "unhealthy": total_scans - healthy_count,
+        "history": scans
+    }
+
+# --- BAKI ROUTES ---
 @app.post("/send-otp")
 async def send_otp(email_data: dict):
     email = email_data.get("email")
     if not email: raise HTTPException(status_code=400, detail="Email dalo!")
     otp = str(random.randint(100000, 999999))
     otp_storage[email] = otp  
-    message = MessageSchema(subject="CropAI OTP", recipients=[email], body=f" Namaste! CropAI par account banane ke liye apka OTP hai: {otp}", subtype=MessageType.plain)
+    message = MessageSchema(subject="CropAI OTP", recipients=[email], body=f"Namaste! CropAI par account banane ke liye apka OTP hai: {otp}", subtype=MessageType.plain)
     fm = FastMail(conf)
     await fm.send_message(message)
     return {"message": "OTP Sent"}

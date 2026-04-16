@@ -1,21 +1,26 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, TIMESTAMP, func
 from database import Base
 
 class User(Base):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    email = Column(String(100), unique=True, index=True)
+    name = Column(String(255))
+    email = Column(String(255), unique=True, index=True)
     password = Column(String(255))
-    city = Column(String(255)) 
+    city = Column(String(255))
     state = Column(String(255))
 
-# 📩 Contact Messages ke liye nayi table
 class ContactMessage(Base):
-    __tablename__ = "messages"
-
+    __tablename__ = "contact_messages"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     email = Column(String(255))
-    message = Column(Text) # Text use kiya hai taaki user lamba sawal puch sake
+    message = Column(String(1000))
+
+# ✅ YE ZAROORI HAI
+class ScanHistory(Base):
+    __tablename__ = "scan_history"
+    id = Column(Integer, primary_key=True, index=True)
+    disease = Column(String(255))
+    confidence = Column(String(50))
+    created_at = Column(TIMESTAMP, server_default=func.now())
