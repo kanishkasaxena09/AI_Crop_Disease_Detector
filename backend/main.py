@@ -12,17 +12,17 @@ import tensorflow as tf
 from keras.layers import DepthwiseConv2D as KDepthwiseConv2D
 import models, database
 
-# 1. Custom Class for Model Loading
+#Custom Class for Model Loading
 class DepthwiseConv2DFix(KDepthwiseConv2D):
     @classmethod
     def from_config(cls, config):
         config.pop("groups", None)
         return super().from_config(config)
 
-# 2. Database Setup
+#Database Setup
 models.Base.metadata.create_all(bind=database.engine)
 
-# 🤖 ML MODEL LOADING
+#ML MODEL LOADING
 try:
     model = tf.keras.models.load_model(
         "crop_disease_model.h5",
@@ -40,7 +40,7 @@ except Exception as e:
 
 app = FastAPI()
 
-# 3. CORS Setup
+# cors
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -49,7 +49,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 4. Email Configuration
+# email config
 conf = ConnectionConfig(
     MAIL_USERNAME = "testweb0925@gmail.com",
     MAIL_PASSWORD = "hcbh ajhi nrym ikbk", 
@@ -64,7 +64,7 @@ conf = ConnectionConfig(
 
 otp_storage = {} 
 
-# 5. Data Models (Schemas)
+#data models
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
@@ -88,7 +88,6 @@ class ProfileUpdate(BaseModel):
     city: str
     state: str
 
-# ✅ Photo Update Schema Yahan Hoga
 class PhotoUpdate(BaseModel):
     email: EmailStr
     photo: str
@@ -97,7 +96,7 @@ class PhotoUpdate(BaseModel):
 def home():
     return {"message": "CropAI Backend is Live!"}
 
-# --- 📸 ML PREDICTION ROUTE ---
+# L PREDICTION ROUTE 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...), db: Session = Depends(database.get_db)):
     if model is None or not class_names:
@@ -133,7 +132,7 @@ async def predict(file: UploadFile = File(...), db: Session = Depends(database.g
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Prediction fail ho gayi!")
 
-# --- 📊 DASHBOARD DATA ---
+# DASHBOARD DATA 
 @app.get("/get-scans")
 def get_scans(db: Session = Depends(database.get_db)):
     scans = db.query(models.ScanHistory).order_by(models.ScanHistory.id.desc()).all()
@@ -147,7 +146,7 @@ def get_scans(db: Session = Depends(database.get_db)):
         "history": scans
     }
 
-# --- 🔐 AUTH ROUTES ---
+# AUTH ROUTES
 @app.post("/send-otp")
 async def send_otp(email_data: dict):
     email = email_data.get("email")
@@ -185,7 +184,7 @@ def login(user: UserLogin, db: Session = Depends(database.get_db)):
         }
     }
 
-# --- 👤 PROFILE PHOTO UPDATE ---
+# photo
 @app.put("/update-photo")
 def update_photo(data: PhotoUpdate, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.email == data.email).first()

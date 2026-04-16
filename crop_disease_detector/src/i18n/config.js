@@ -8,7 +8,7 @@ i18n.use(initReactI18next).init({
     en: { translation: en },
     hi: { translation: hi }
   },
-  lng: 'en', // default bhasha
+  lng: 'en', 
   fallbackLng: 'en',
   interpolation: { escapeValue: false }
 });
