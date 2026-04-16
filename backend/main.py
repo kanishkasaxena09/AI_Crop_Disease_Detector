@@ -12,13 +12,14 @@ import tensorflow as tf
 from keras.layers import DepthwiseConv2D as KDepthwiseConv2D
 import models, database
 
+# 1. Custom Class for Model Loading
 class DepthwiseConv2DFix(KDepthwiseConv2D):
     @classmethod
     def from_config(cls, config):
         config.pop("groups", None)
         return super().from_config(config)
 
-# 1. Database Setup
+# 2. Database Setup
 models.Base.metadata.create_all(bind=database.engine)
 
 # 🤖 ML MODEL LOADING
@@ -39,7 +40,7 @@ except Exception as e:
 
 app = FastAPI()
 
-# 2. CORS Setup
+# 3. CORS Setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -48,7 +49,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 3. Email Configuration
+# 4. Email Configuration
 conf = ConnectionConfig(
     MAIL_USERNAME = "testweb0925@gmail.com",
     MAIL_PASSWORD = "hcbh ajhi nrym ikbk", 
@@ -63,7 +64,7 @@ conf = ConnectionConfig(
 
 otp_storage = {} 
 
-# 4. Data Models (Schemas)
+# 5. Data Models (Schemas)
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
@@ -87,11 +88,16 @@ class ProfileUpdate(BaseModel):
     city: str
     state: str
 
+# ✅ Photo Update Schema Yahan Hoga
+class PhotoUpdate(BaseModel):
+    email: EmailStr
+    photo: str
+
 @app.get("/")
 def home():
     return {"message": "CropAI Backend is Live!"}
 
-# --- 📸 ML PREDICTION ROUTE (Database Saving Included) ---
+# --- 📸 ML PREDICTION ROUTE ---
 @app.post("/predict")
 async def predict(file: UploadFile = File(...), db: Session = Depends(database.get_db)):
     if model is None or not class_names:
@@ -110,7 +116,6 @@ async def predict(file: UploadFile = File(...), db: Session = Depends(database.g
         confidence = float(np.max(predictions))
         disease_name = class_names[pred_index]
 
-        # ✅ DATABASE MEIN SAVE KARO
         new_scan = models.ScanHistory(
             disease=disease_name,
             confidence=f"{confidence*100:.2f}%"
@@ -128,7 +133,7 @@ async def predict(file: UploadFile = File(...), db: Session = Depends(database.g
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Prediction fail ho gayi!")
 
-# --- 📊 DASHBOARD DATA FETCH ROUTE ---
+# --- 📊 DASHBOARD DATA ---
 @app.get("/get-scans")
 def get_scans(db: Session = Depends(database.get_db)):
     scans = db.query(models.ScanHistory).order_by(models.ScanHistory.id.desc()).all()
@@ -142,17 +147,20 @@ def get_scans(db: Session = Depends(database.get_db)):
         "history": scans
     }
 
-# --- BAKI ROUTES ---
+# --- 🔐 AUTH ROUTES ---
 @app.post("/send-otp")
 async def send_otp(email_data: dict):
     email = email_data.get("email")
     if not email: raise HTTPException(status_code=400, detail="Email dalo!")
     otp = str(random.randint(100000, 999999))
     otp_storage[email] = otp  
-    message = MessageSchema(subject="CropAI OTP", recipients=[email], body=f"Namaste! CropAI par account banane ke liye apka OTP hai: {otp}", subtype=MessageType.plain)
+    message = MessageSchema(subject="CropAI OTP", recipients=[email], body=f"OTP: {otp}", subtype=MessageType.plain)
     fm = FastMail(conf)
-    await fm.send_message(message)
-    return {"message": "OTP Sent"}
+    try:
+        await fm.send_message(message)
+        return {"message": "OTP Sent"}
+    except:
+        raise HTTPException(status_code=500, detail="Email Error")
 
 @app.post("/signup")
 def signup(user: UserCreate, db: Session = Depends(database.get_db)):
@@ -166,14 +174,25 @@ def signup(user: UserCreate, db: Session = Depends(database.get_db)):
 def login(user: UserLogin, db: Session = Depends(database.get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if not db_user or db_user.password != user.password: raise HTTPException(status_code=401, detail="Error")
-    return {"message": "Success", "user": {"name": db_user.name, "email": db_user.email, "city": db_user.city, "state": db_user.state}}
+    return {
+        "message": "Success", 
+        "user": {
+            "name": db_user.name, 
+            "email": db_user.email, 
+            "city": db_user.city, 
+            "state": db_user.state,
+            "photo": db_user.profile_photo
+        }
+    }
 
-@app.post("/contact")
-async def receive_contact(msg: ContactCreate, db: Session = Depends(database.get_db)):
-    new_entry = models.ContactMessage(name=msg.name, email=msg.email, message=msg.message)
-    db.add(new_entry)
+# --- 👤 PROFILE PHOTO UPDATE ---
+@app.put("/update-photo")
+def update_photo(data: PhotoUpdate, db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.email == data.email).first()
+    if not user: raise HTTPException(status_code=404, detail="User nahi mila")
+    user.profile_photo = data.photo
     db.commit()
-    return {"message": "Saved"}
+    return {"message": "Photo Saved in DB"}
 
 @app.put("/update-profile")
 def update_profile(data: ProfileUpdate, db: Session = Depends(database.get_db)):

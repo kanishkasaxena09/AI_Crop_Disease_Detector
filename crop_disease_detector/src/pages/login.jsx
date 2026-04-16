@@ -19,7 +19,7 @@ const CustomModal = ({ isOpen, message, onClose }) => (
   </AnimatePresence>
 );
 
-const Login = ({ setIsLoggedIn }) => { // 👈 setIsLoggedIn prop zaroori hai
+const Login = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,14 +34,14 @@ const Login = ({ setIsLoggedIn }) => { // 👈 setIsLoggedIn prop zaroori hai
       const response = await axios.post("http://127.0.0.1:8000/login", { email, password });
 
       if (response.status === 200) {
-        // 1. Browser ki memory mein save karo
+        // ✅ Sab kuch browser ki memory mein save karo
         localStorage.setItem("userName", response.data.user.name);
+        localStorage.setItem("userEmail", response.data.user.email);
+        localStorage.setItem("userCity", response.data.user.city);   // 👈 Ye line jodi hai
+        localStorage.setItem("userState", response.data.user.state); // 👈 Ye line jodi hai
         localStorage.setItem("isLoggedIn", "true");
 
-        // 2. 🚀 App State update karo (Loophole theek karne ke liye)
         setIsLoggedIn(true);
-
-        // 3. Seedha Home Page!
         navigate('/home'); 
       }
     } catch (error) {
@@ -55,9 +55,9 @@ const Login = ({ setIsLoggedIn }) => { // 👈 setIsLoggedIn prop zaroori hai
       <div className="bg-white p-10 rounded-[40px] shadow-xl w-full max-w-md border border-gray-100">
         <h2 className="text-4xl font-black text-green-800 italic text-center mb-10">Wapas <span className="text-green-500">Aaye</span></h2>
         <form onSubmit={handleLogin} className="space-y-6">
-          <input type="email" placeholder="Email Address" className="w-full bg-gray-50 border rounded-2xl py-4 px-6 focus:border-green-500 outline-none font-bold" onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" className="w-full bg-gray-50 border rounded-2xl py-4 px-6 focus:border-green-500 outline-none font-bold" onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit" disabled={loading} className="w-full bg-green-700 hover:bg-green-800 text-white font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all">
+          <input type="email" placeholder="Email Address" className="w-full bg-gray-50 border rounded-2xl py-4 px-6 focus:border-green-500 outline-none font-bold text-left" onChange={(e) => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Password" className="w-full bg-gray-50 border rounded-2xl py-4 px-6 focus:border-green-500 outline-none font-bold text-left" onChange={(e) => setPassword(e.target.value)} required />
+          <button type="submit" disabled={loading} className="w-full bg-green-700 hover:bg-green-800 text-white font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all text-center">
             {loading ? "Rukiye..." : "Dashboard Kholiye 🚀"}
           </button>
         </form>

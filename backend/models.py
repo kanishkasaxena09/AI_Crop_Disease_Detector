@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, func
+from sqlalchemy.dialects.mysql import LONGTEXT
 from database import Base
 
 class User(Base):
@@ -9,6 +10,7 @@ class User(Base):
     password = Column(String(255))
     city = Column(String(255))
     state = Column(String(255))
+    profile_photo = Column(LONGTEXT)
 
 class ContactMessage(Base):
     __tablename__ = "contact_messages"
@@ -17,7 +19,6 @@ class ContactMessage(Base):
     email = Column(String(255))
     message = Column(String(1000))
 
-# ✅ YE ZAROORI HAI
 class ScanHistory(Base):
     __tablename__ = "scan_history"
     id = Column(Integer, primary_key=True, index=True)
