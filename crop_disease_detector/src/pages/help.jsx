@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // ✅ Ye add kiya
+import { Link } from 'react-router-dom'; 
 import PageTransition from '../components/PageTransition';
 
 const Help = () => {
@@ -55,12 +55,12 @@ const Help = () => {
         ))}
       </div>
 
-      {/* --- Updated Button Section --- */}
+      {/*button*/}
       <div className="mt-20 text-center bg-primary/5 p-10 rounded-[40px] max-w-2xl mx-auto">
         <h3 className="text-xl font-bold text-gray-800 mb-2">Abhi bhi koi sawal hai?</h3>
         <p className="text-gray-500 mb-6 text-sm">Hamari team se seedha sampark karein.</p>
         
-        {/* 🚀 Ab ye button seedha Contact page par le jayega */}
+        {/* direct contact page */}
         <Link 
           to="/contact" 
           className="inline-block bg-primary text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 transition hover:bg-opacity-90 active:scale-95"

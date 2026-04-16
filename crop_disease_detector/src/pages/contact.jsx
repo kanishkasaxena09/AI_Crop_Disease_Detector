@@ -10,7 +10,7 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 🚀 Backend ko message bhej rahe hain
+      //sending message to backed
       const response = await axios.post("http://127.0.0.1:8000/contact", formData);
       if (response.status === 200) {
         alert("Dhanyawad lala! Apka sandesh humein mil gaya hai.");
