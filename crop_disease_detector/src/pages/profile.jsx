@@ -1,105 +1,86 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // 🌐 Language hook
-import PageTransition from '../components/PageTransition';
+import { motion } from 'framer-motion';
 
 const Profile = ({ setIsLoggedIn }) => {
+  const [userName, setUserName] = useState('');
+  const [userLocation, setUserLocation] = useState(''); // 👈 Location state
+  const [userPhoto, setUserPhoto] = useState(null);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(); // 't' function text ke liye, 'i18n' language change ke liye
 
-  // Dummy User Data
-  const user = {
-    name: "Kanishka",
-    location: "Bareilly, Uttar Pradesh",
-    joined: "April 2026",
-    totalScans: 12,
+  useEffect(() => {
+    const name = localStorage.getItem('userName');
+    const city = localStorage.getItem('userCity');
+    const state = localStorage.getItem('userState');
+    const savedPhoto = localStorage.getItem('userPhoto');
+    
+    if (name) setUserName(name);
+    if (city && state) setUserLocation(`${city}, ${state}`); // 👈 Display logic
+    if (savedPhoto) setUserPhoto(savedPhoto);
+  }, []);
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result;
+        setUserPhoto(base64);
+        localStorage.setItem('userPhoto', base64);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  // Language Badalne wala function
-  const changeLanguage = (e) => {
-    i18n.changeLanguage(e.target.value);
-  };
-
-  // Logout function
   const handleLogout = () => {
+    localStorage.clear();
     setIsLoggedIn(false);
-    navigate('/');
+    navigate('/login');
   };
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-gray-50 pt-28 pb-32 px-6">
-        <div className="max-w-2xl mx-auto">
-          
-          {/* 👤 User Glass Card */}
-          <div className="bg-white/40 backdrop-blur-xl rounded-[50px] p-10 border border-white shadow-2xl relative overflow-hidden mb-8 text-center">
-            <div className="w-32 h-32 rounded-full border-4 border-primary/20 mx-auto mb-6 overflow-hidden shadow-xl bg-white flex items-center justify-center">
-               <span className="text-5xl">👤</span>
-            </div>
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoChange} />
 
-            <h1 className="text-3xl font-black text-green-950 italic">{user.name}</h1>
-            <p className="text-green-900/60 font-bold text-xs uppercase tracking-[0.3em] mt-2">
-              {user.location}
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 mt-10">
-              <div className="bg-green-900/5 p-5 rounded-[35px] border border-green-900/5 text-center">
-                <span className="block text-[10px] font-black text-green-900/40 uppercase tracking-widest mb-1">
-                    {t('Sadasya Kabse')} {/* 👈 JSON se aayega */}
-                </span>
-                <span className="text-lg font-black text-green-900">{user.joined}</span>
-              </div>
-              <div className="bg-green-900/5 p-5 rounded-[35px] border border-green-900/5 text-center">
-                <span className="block text-[10px] font-black text-green-900/40 uppercase tracking-widest mb-1">
-                    {t('Total Scans')}
-                </span>
-                <span className="text-lg font-black text-green-900">{user.totalScans}</span>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[40px] shadow-lg overflow-hidden border border-gray-100">
+          <div className="h-32 bg-green-700 relative">
+            <div className="absolute -bottom-12 left-8">
+              <div onClick={() => fileInputRef.current.click()} className="w-24 h-24 bg-green-100 rounded-[30px] border-4 border-white flex items-center justify-center shadow-md overflow-hidden cursor-pointer hover:opacity-80 transition-all">
+                {userPhoto ? <img src={userPhoto} alt="Profile" className="w-full h-full object-cover" /> : <span className="text-4xl text-green-700">👤</span>}
               </div>
             </div>
           </div>
 
-          {/* 🌐 Language Switcher Card (New!) */}
-          <div className="bg-white/40 backdrop-blur-xl rounded-[40px] p-8 border border-white shadow-xl mb-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="text-2xl">🌐</span>
-                <h3 className="font-black text-green-950 italic text-lg">{t('language')}</h3>
+          <div className="pt-16 pb-10 px-8">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-4xl font-black text-green-950 italic tracking-tighter">{userName || 'Kisan Bhai'}</h1>
+                <p className="text-gray-400 font-bold mt-1 uppercase text-xs tracking-widest">Verified Member</p>
               </div>
-              
-              <select 
-                value={i18n.language} 
-                onChange={changeLanguage}
-                className="bg-green-900 text-white px-4 py-2 rounded-2xl font-black text-xs outline-none shadow-lg shadow-green-900/20 cursor-pointer"
-              >
-                <option value="en">English</option>
-                <option value="hi">हिंदी (Hindi)</option>
-              </select>
+              <button onClick={handleLogout} className="bg-red-50 text-red-600 px-6 py-2 rounded-2xl font-black text-sm hover:bg-red-600 hover:text-white transition-all">Logout</button>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-6 rounded-[30px] border border-gray-100">
+                <p className="text-[10px] font-black text-green-700 uppercase mb-1">Status</p>
+                <p className="font-bold text-gray-800">Active Farmer</p>
+              </div>
+              {/* Location Card 👈 */}
+              <div className="bg-gray-50 p-6 rounded-[30px] border border-gray-100">
+                <p className="text-[10px] font-black text-green-700 uppercase mb-1">Location</p>
+                <p className="font-bold text-gray-800">{userLocation || 'Not Set'}</p>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <button onClick={() => navigate('/home')} className="w-full bg-green-700 text-white font-black py-4 rounded-2xl shadow-lg hover:bg-green-800 transition-all">Ghar Wapas Chals</button>
             </div>
           </div>
-
-          {/* 📜 History Shortcut */}
-          <button 
-            onClick={() => navigate('/history')}
-            className="w-full bg-white p-6 rounded-[35px] shadow-sm border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform mb-8"
-          >
-            <div className="flex items-center space-x-5">
-              <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-2xl">📜</div>
-              <span className="font-black text-green-950 uppercase tracking-widest text-sm">{t('scan_history')}</span>
-            </div>
-            <span className="text-gray-300">→</span>
-          </button>
-
-          {/* 🚪 Logout Button */}
-          <button 
-            onClick={handleLogout}
-            className="w-full py-5 bg-red-50 text-red-600 rounded-[30px] font-black uppercase tracking-[0.2em] text-[11px] hover:bg-red-100 transition-all border border-red-100 active:scale-95 shadow-sm"
-          >
-            {t('logout')}
-          </button>
-
-        </div>
+        </motion.div>
       </div>
-    </PageTransition>
+    </div>
   );
 };
 

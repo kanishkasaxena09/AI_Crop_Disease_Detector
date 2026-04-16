@@ -18,7 +18,7 @@ import Signup from './pages/signup';
 import Help from './pages/help';
 import Terms from './pages/terms';
 import Weather from './pages/weather';
-import History from './pages/history';
+
 
 
 
@@ -47,7 +47,7 @@ function App() {
             <Route path="/help" element={<Help />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/weather" element={<Weather />} />
-            <Route path="/history" element={<History />} />
+            
             
             
             {/* Auth Pages */}

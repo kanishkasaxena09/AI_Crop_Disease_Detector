@@ -17,7 +17,7 @@ const Navbar = ({ isLoggedIn }) => {
                 <Link to="/home" className="hover:text-primary">Home</Link>
                 <Link to="/scan" className="hover:text-primary">Scan</Link>
                 <Link to="/dashboard" className="hover:text-primary">Dashboard</Link>
-                <Link to="/history" className="hover:text-primary">History</Link>
+              
                 <Link to="/weather" className="hover:text-primary">Weather</Link>
                 <Link to="/contact" className="hover:text-primary">Contact Us</Link>
                 
