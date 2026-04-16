@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// Layout Components
 import Navbar from './components/layout/navbar';
 import Footer from './components/layout/footer';
 
-// Pages
 import Splash from './pages/splash';
 import Home from './pages/home';
 import About from './pages/about';
@@ -21,8 +19,6 @@ import Weather from './pages/weather';
 
 
 
-
-// Utils
 import ScrollToTop from './components/utils/ScrollToTop';
 
 function App() {
@@ -34,12 +30,12 @@ function App() {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen bg-white">
         
-        {/* Navbar - Isme isLoggedIn pass kiya hai taaki buttons switch ho sakein */}
+        { }
         <Navbar isLoggedIn={isLoggedIn} />
 
         <main className="flex-grow">
           <Routes>
-            {/* --- Public Routes (Sab dekh sakte hain) --- */}
+            { }
             <Route path="/" element={<Splash setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/welcome" element={<Splash setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/about" element={<About />} />
@@ -54,8 +50,8 @@ function App() {
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
 
-            {/* --- Protected Routes (Sirf login ke baad) --- */}
-            {/* Agar login nahi hai, toh ye seedha login page par bhej dega */}
+            { }
+            { }
             <Route 
               path="/home" 
               element={isLoggedIn ? <Home /> : <Navigate to="/login" />} 
@@ -73,7 +69,7 @@ function App() {
               element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/login" />} 
             />
 
-            {/* --- 404 Page (Jab koi galat URL daale) --- */}
+            { }
             <Route path="*" element={
               <div className="flex flex-col items-center justify-center py-20">
                 <h1 className="text-9xl font-black text-gray-100 italic">404</h1>
