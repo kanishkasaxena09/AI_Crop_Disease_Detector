@@ -57,7 +57,7 @@ const Signup = ({ setIsLoggedIn }) => {
         navigate('/home'); 
       }
     } catch (err) {
-      setModal({ open: true, message: err.response?.data?.detail || "Galti ho gayi!" });
+      setModal({ open: true, message: err.response?.data?.detail || "Phle se account bna hua h!" });
     } finally { setLoading(false); }
   };
 
