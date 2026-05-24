@@ -34,7 +34,7 @@ try:
     class_names = {int(v): k for k, v in class_indices.items()}
     print("AI Model and Classes are loaded successfully!")
 except Exception as e:
-    print(f"AI Model not loaded: {e}")
+    print(f"AI Model not loaded: {e}")  
     model = None
     class_names = {}
 
