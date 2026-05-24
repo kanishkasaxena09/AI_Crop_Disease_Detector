@@ -8,7 +8,6 @@ const About = () => {
     { title: "Expert Advice", desc: "Bimari ke hisab se sahi dawai aur upchar ki jankari." },
     { title: "Free for All", desc: "Hamara maksad har kisan tak technology pahunchana hai." }
   ];
-
   return (
     <PageTransition>
     <div className="min-h-screen bg-white">

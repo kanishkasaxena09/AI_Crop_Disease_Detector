@@ -5,14 +5,14 @@ import numpy as np
 from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr 
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from PIL import Image
 import tensorflow as tf
 from keras.layers import DepthwiseConv2D as KDepthwiseConv2D
 import models, database
 
-#Custom Class for Model Loading
+#Custom Class for Model Loading 
 class DepthwiseConv2DFix(KDepthwiseConv2D):
     @classmethod
     def from_config(cls, config):
